@@ -69,25 +69,39 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <button id="btn-console-log">Console Log</button>
+      <button id="btn-console-error">Console Error</button>
+      <button id="btn-console-count">Console Count</button>
+      <button id="btn-console-warn">Console Warn</button>
+      <button id="btn-console-assert">Console Assert</button>
+      <button id="btn-console-clear">Console Clear</button>
+      <button id="btn-console-dir">Console Dir</button>
+      <button id="btn-console-Dirxml">Console dirxml</button>
+      <button id="btn-console-start">Console Group Start</button>
+      <button id="btn-console-end">Console Group End</button>
+      <button id="btn-console-table">Console Table</button>
+      <button id="btn-start">Start Timer</button>
+      <button id="btn-end">End Timer</button>
+      <button id="btn-console-trace">Console Trace</button>
+      <button id="btn-trigger-globbal">Trigger a Global Error</button>
     </section>
   </main>
 
   <script>
+    class ValidationError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "ValidationError";
+      }
+    }
+
+    class MathDivError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "MathDivError";
+      }
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +109,95 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      try {
+        if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new ValidationError('Please enter a number');
+        }
+        if (operator === '/' && secondNum === '0') {
+          throw new MathDivError('Cannot divide by zero');
+        }
+
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          console.error(error.message);
+        } else if (error instanceof MathDivError) {
+          console.warn(error.message);
+        } else {
+          console.log(error.message);
+        }
+
+        output.innerHTML = error.message;
+        return;
+      }
+
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
-    // Start your code here
-    // You may move this JS to another file if you wish
+    for (let i = 0; i < errorBtns.length; i++) {
+      errorBtns[i].addEventListener('click', e => {
+        let btn = e.target.id;
+        switch (btn) {
+          case 'btn-console-log':
+            console.log('Console Log Demo');
+            break;
+          case 'btn-console-error':
+            console.error('Console Error Demo');
+            break;
+          case 'btn-console-count':
+            console.count('Count Button');
+            break;
+          case 'btn-console-warn':
+            console.warn('Console Warn Demo');
+            break;
+          case 'btn-console-assert':
+            console.assert(false, 'This is a console assert');
+            break;
+          case 'btn-console-clear':
+            console.clear();
+            break;
+          case 'btn-console-dir':
+            console.dir(errorBtns[i]);
+            break;
+          case 'btn-console-Dirxml':
+            console.dirxml(errorBtns[i]);
+            break;
+          case 'btn-console-start':
+            console.group('This is a console group');
+            break;
+          case 'btn-console-end':
+            console.groupEnd();
+            break;
+          case 'btn-console-table':
+            console.table([{
+              name: 'Software Engineering',
+              num: 110
+            }, {
+              name: 'Programming Language',
+              num: 130
+            }, {
+              name: 'Advaned Software Engineering',
+              num: 112
+            }]);
+            break;
+          case 'btn-start':
+            console.time('This is a console time');
+            break;
+          case 'btn-end':
+            console.timeEnd('This is a console time');
+            break;
+          case 'btn-console-trace':
+            console.trace('This is a console trace');
+            break;
+          case 'btn-trigger-globbal':
+            boom();
+            break;
+        }
+      });
+    }
+
   </script>
 </body>
 
