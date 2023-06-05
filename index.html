@@ -55,6 +55,16 @@
       // for more configuration options, see https://docs.trackjs.com
     });
   </script>
+  <script>
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.log('Global Error');
+      console.log(message);
+      console.log(source);
+      console.log(lineno);
+      console.log(colno);
+      console.log(error);
+    }
+  </script>
 </head>
 
 <body>
